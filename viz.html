@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3plus@2"></script>
+    <title>Treemap</title>
+</head>
+<body>
+    <style>
+         body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    </style>
+    <div id="make_viz"></div>
+    <script>
+       
+     d3.csv("parastatal.csv", function(error, data) {
+        //new d3plus.nest(data, ["parastatal", "year"])
+        data.forEach(function(d) {
+            //d.year = parseDate(d.year);
+            d.allocation = +d.allocation;
+            //n = +d.allocation.toString();
+            });
+        
+            
+            new d3plus.Treemap()
+            .data(data)
+            .groupBy(["year","parastatal"])
+            .depth(0)
+            .shapeConfig({
+                labelConfig: {
+                fontFamily: "serif",
+                fontMax: 100
+                }  
+            })
+            .tooltipConfig({
+                tbody: [
+                    ["Allocation", function(d) { return d.allocation.toString() }]
+                ]
+                })
+            .legendConfig({
+            shapeConfig: {
+                width: 30,
+                height: 30,
+            },
+            label: false
+            })
+            
+            .on({
+                click: function() {
+                if (this._tooltip) {
+                    this._tooltipClass.data([]).render();
+                }
+                }
+            })
+            .sum("allocation")
+            .render();
+
+            
+        }); 
+        
+    </script>
+</body>
+</html>
